@@ -56,15 +56,6 @@ try {
     });
     jsmaf.root.children.push(bg_home);
 
-    jsmaf.onKeyDown = function(keyCode) {
-        //cross pressed
-        if (keyCode === 14) {
-            if(!jsmaf.circleIsAdvanceButton) {
-                include('loader.js')
-            }
-        }
-    }
-
     // Create text objects for each line
     var maxLines = 38;
     var logTextLines = [];
@@ -73,11 +64,8 @@ try {
     for (var i = 0; i < maxLines; i++) {
         var lineText = new jsmaf.Text();
         lineText.text = "";
-        
-        lineText.color = "#FFFFFF"; 
-        
-        lineText.x = 20;
-        lineText.y = 120 + (i * 20);
+        lineText.x = 0;
+        lineText.y = 0 + (i * 20);
         jsmaf.root.children.push(lineText);
         logTextLines.push(lineText);
     }
@@ -114,6 +102,10 @@ try {
     error = function(msg) {
         _log(`[-] ${msg}`, true)
     }
+
+    // Run loader
+    log("Running loader...");
+    include('loader.js');
 
     // handle WebSocket received messages
     ws.onmessage = function(c, e) {
