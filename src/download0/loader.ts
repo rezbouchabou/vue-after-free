@@ -1,5 +1,4 @@
 import { libc_addr } from 'download0/userland'
-import { stats } from 'download0/stats-tracker'
 import { fn, mem, BigInt, utils } from 'download0/types'
 import { sysctlbyname } from 'download0/kernel'
 import { lapse } from 'download0/lapse'
@@ -16,35 +15,20 @@ jsmaf.loader_has_run = true
 if (typeof libc_addr === 'undefined') {
   include('userland.js')
 }
-include('stats-tracker.js')
 include('binloader.js')
 include('lapse.js')
 include('kernel.js')
 include('check-jailbroken.js')
-include('stats-tracker.js')
 log('All scripts loaded')
 
-// Increment total attempts
-stats.load()
-
-export function show_success (immediate?: boolean, skipStats?: boolean) {
+export function show_success (immediate?: boolean) {
   if (immediate) {
-    jsmaf.root.children.push(bg_success)
     log('Logging Success...')
-    if (!skipStats) stats.incrementSuccess()
   } else {
     setTimeout(() => {
-      jsmaf.root.children.push(bg_success)
       log('Logging Success...')
-      if (!skipStats) stats.incrementSuccess()
     }, 2000)
   }
-}
-
-if (typeof CONFIG !== 'undefined' && CONFIG.music) {
-  const audio = new jsmaf.AudioClip()
-  audio.volume = 0.5  // 50% volume
-  audio.open('file://../download0/sfx/bgm.wav')
 }
 
 const is_jailbroken = checkJailbroken()
@@ -113,22 +97,11 @@ const compare_version = (a: string, b: string) => {
 }
 
 if (!is_jailbroken) {
-  const jb_behavior = (typeof CONFIG !== 'undefined' && typeof CONFIG.jb_behavior === 'number') ? CONFIG.jb_behavior : 0
 
-  stats.incrementTotal()
   utils.notify(FW_VERSION + ' Detected!')
 
   let use_lapse = false
-
-  if (jb_behavior === 1) {
-    log('JB Behavior: NetControl (forced)')
-    include('netctrl_c0w_twins.js')
-  } else if (jb_behavior === 2) {
-    log('JB Behavior: Lapse (forced)')
-    use_lapse = true
-    lapse()
-  } else {
-    log('JB Behavior: Auto Detect')
+  log('Auto Detect')
     if (compare_version(FW_VERSION, '7.00') >= 0 && compare_version(FW_VERSION, '12.02') <= 0) {
       use_lapse = true
       lapse()
@@ -178,7 +151,6 @@ if (!is_jailbroken) {
   }
 } else {
   utils.notify('Already Jailbroken!')
-  try { include('main-menu.js') } catch (e) { /* escaped sandbox */ }
 }
 
 export function run_binloader () {
