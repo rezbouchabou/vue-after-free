@@ -56,14 +56,20 @@ try {
     });
     jsmaf.root.children.push(bg_home);
 
-    // Create text objects for each line
+    // 1. Define the style first (only needs to be done once)
+    new Style({ name: 'whiteText', color: '#FFFFFF', size: 20 });
+
     var maxLines = 38;
     var logTextLines = [];
 
-    // Create text object for each line
+    // 2. Create text objects for each line
     for (var i = 0; i < maxLines; i++) {
         var lineText = new jsmaf.Text();
         lineText.text = "";
+        
+        // 3. ASSIGN THE STYLE HERE
+        lineText.style = 'whiteText'; 
+        
         lineText.x = 0;
         lineText.y = 0 + (i * 20);
         jsmaf.root.children.push(lineText);

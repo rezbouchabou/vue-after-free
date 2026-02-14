@@ -938,6 +938,15 @@ const LOG_COLORS = [
 function setup_log_screen () {
   jsmaf.root.children.length = 0
 
+  const bg = new Image({
+    url: 'file:///assets/img/multiview_bg.png',
+    x: 0,
+    y: 0,
+    width: 1920,
+    height: 1080
+  })
+  jsmaf.root.children.push(bg)
+
   for (let i = 0; i < LOG_COLORS.length; i++) {
     new Style({ name: 'log' + i, color: LOG_COLORS[i], size: 20 })
   }
@@ -1187,8 +1196,8 @@ function jailbreak () {
 
   jailbreak_shared(FW_VERSION)
 
-  log('Jailbreak Complete - JAILBROKEN')
-  utils.notify('The Vue-after-Free team congratulates you\nNetCtrl Finished OK\nEnjoy freedom')
+  log('Jailbreak Complete')
+  utils.notify('Success')
 
   cleanup(false) // Close sockets and kill workers on success
   show_success()
@@ -1539,7 +1548,7 @@ function kreadslow64 (address: BigInt) {
   // debug("Buffer from kreadslow: " + hex(buffer));
   if (buffer.eq(BigInt_Error)) {
     cleanup()
-    throw new Error('Netctrl failed - Reboot and try again')
+    throw new Error('Failed! Reboot and try again.')
   }
   return read64(buffer)
 }
