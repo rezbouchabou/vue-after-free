@@ -3,7 +3,7 @@ import { fn, mem, BigInt, utils } from 'download0/types'
 import { sysctlbyname } from 'download0/kernel'
 import { lapse } from 'download0/lapse'
 import { binloader_init } from 'download0/binloader'
-import { checkJailbroken } from 'download0/check-jailbroken'
+import { checkJailbroken } from 'download0/jailbroken'
 
 if (jsmaf.loader_has_run) {
   throw new Error('loader already ran')
@@ -18,7 +18,7 @@ if (typeof libc_addr === 'undefined') {
 include('binloader.js')
 include('lapse.js')
 include('kernel.js')
-include('check-jailbroken.js')
+include('jailbroken.js')
 log('All scripts loaded')
 
 export function show_success (immediate?: boolean) {
