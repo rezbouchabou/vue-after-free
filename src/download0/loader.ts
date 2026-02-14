@@ -151,6 +151,7 @@ if (!is_jailbroken) {
   }
 } else {
   utils.notify('Already Jailbroken!')
+  try { include('loader.js') } catch (e) { /* escaped sandbox */ }
 }
 
 export function run_binloader () {
