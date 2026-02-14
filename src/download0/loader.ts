@@ -106,7 +106,7 @@ if (!is_jailbroken) {
       use_lapse = true
       lapse()
     } else if (compare_version(FW_VERSION, '12.50') >= 0 && compare_version(FW_VERSION, '13.00') <= 0) {
-      include('netctrl_c0w_twins.js')
+      include('netctrl.js')
     }
   }
 
