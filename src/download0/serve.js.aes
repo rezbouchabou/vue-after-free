@@ -73,7 +73,9 @@ try {
     for (var i = 0; i < maxLines; i++) {
         var lineText = new jsmaf.Text();
         lineText.text = "";
-        lineText.color = "#ffffff";         
+        
+        lineText.color = "#FFFFFF"; 
+        
         lineText.x = 20;
         lineText.y = 120 + (i * 20);
         jsmaf.root.children.push(lineText);
