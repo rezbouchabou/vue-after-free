@@ -9,7 +9,6 @@ if (typeof libc_addr === 'undefined') {
   include('userland.js')
 }
 include('kernel.js')
-include('stats-tracker.js')
 include('binloader.js')
 if (!String.prototype.padStart) {
   String.prototype.padStart = function padStart (targetLength, padString) {
@@ -933,15 +932,14 @@ function init_threading () {
 
 const LOG_MAX_LINES = 38
 const LOG_COLORS = [
-  '#FF6B6B', '#FFA94D', '#FFD93D', '#6BCF7F',
-  '#4DABF7', '#9775FA', '#DA77F2'
+  '#FFFFFF'
 ]
 
 function setup_log_screen () {
   jsmaf.root.children.length = 0
 
   const bg = new Image({
-    url: 'file:///../download0/img/multiview_bg_VAF.png',
+    url: 'file:///assets/img/multiview_bg.png',
     x: 0,
     y: 0,
     width: 1920,
