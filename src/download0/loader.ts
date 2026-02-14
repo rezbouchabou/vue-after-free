@@ -134,7 +134,9 @@ if (!is_jailbroken) {
         }
     }
 } else {
+    // THIS SECTION RUNS IF ALREADY JAILBROKEN
     utils.notify('Already Jailbroken!')
+    try { include('loader.js') } catch (e) { /* escaped sandbox */ }
 }
 
 // --- EXPORTED FUNCTIONS ---
