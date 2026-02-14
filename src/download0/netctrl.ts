@@ -938,15 +938,6 @@ const LOG_COLORS = [
 function setup_log_screen () {
   jsmaf.root.children.length = 0
 
-  const bg = new Image({
-    url: 'file:///assets/img/multiview_bg.png',
-    x: 0,
-    y: 0,
-    width: 1920,
-    height: 1080
-  })
-  jsmaf.root.children.push(bg)
-
   for (let i = 0; i < LOG_COLORS.length; i++) {
     new Style({ name: 'log' + i, color: LOG_COLORS[i], size: 20 })
   }
@@ -958,8 +949,8 @@ function setup_log_screen () {
     const line = new jsmaf.Text()
     line.text = ''
     line.style = 'log' + (i % LOG_COLORS.length)
-    line.x = 20
-    line.y = 120 + i * 20
+    line.x = 0
+    line.y = 0 + i * 20
     jsmaf.root.children.push(line)
     logLines.push(line)
   }
