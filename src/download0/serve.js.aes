@@ -69,16 +69,11 @@ try {
     var maxLines = 38;
     var logTextLines = [];
 
-    // Colors
-    var textColors = [
-        "#ffffff", // White
-    ];
-
     // Create text object for each line
     for (var i = 0; i < maxLines; i++) {
         var lineText = new jsmaf.Text();
         lineText.text = "";
-        lineText.background = textColors[i % textColors.length];
+        lineText.color = "#ffffff";         
         lineText.x = 20;
         lineText.y = 120 + (i * 20);
         jsmaf.root.children.push(lineText);
