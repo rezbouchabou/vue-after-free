@@ -761,7 +761,7 @@ export function binloader_init () {
     if (!is_jailbroken) {
       bin_loader_main()
     } else {
-      bl_load_from_file('/download0/payloads/elfldr.elf')
+      bl_load_from_file('/download0/elfldr.elf')
     }
   }
 
