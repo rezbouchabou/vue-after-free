@@ -386,7 +386,7 @@ export function binloader_init () {
     mmap_base: BigInt | null,
     mmap_size: number,
     entry_point: BigInt | null,
-    skip_autoclose: boolean,
+    skip_autoclose: boolean,  // Kept for compatibility but not used
     init: (bin_data_addr: BigInt, bin_size: number) => void,
     run: () => void
   } = {
@@ -472,39 +472,21 @@ export function binloader_init () {
         log('SUCCESS: Payload thread created!')
         const thr_id = mem.view(thread_handle).getBigInt(0, true)
         log('Thread handle: ' + thr_id.toString())
-        // utils.notify("Payload loaded!\nThread spawned successfully");
+        
+        // ALWAYS auto-close - removed conditionals
+        log('Auto-close enabled - terminating current process')
 
-        // Check if autoclose is enabled
-        if (typeof CONFIG !== 'undefined' && CONFIG.autoclose && !BinLoader.skip_autoclose) {
-          log('CONFIG.autoclose enabled - terminating current process')
+        fn.register(0x14, 'getpid', [], 'bigint')
+        fn.register(0x25, 'kill', ['bigint', 'bigint'], 'bigint')
 
-          fn.register(0x14, 'getpid', [], 'bigint')
-          fn.register(0x25, 'kill', ['bigint', 'bigint'], 'bigint')
+        const pid = fn.getpid()
+        const pid_num = (pid instanceof BigInt) ? pid.lo : pid
+        log('Current PID: ' + pid_num)
+        log('Sending SIGKILL to PID ' + pid_num)
 
-          const pid = fn.getpid()
-          const pid_num = (pid instanceof BigInt) ? pid.lo : pid
-          log('Current PID: ' + pid_num)
-          log('Sending SIGKILL to PID ' + pid_num)
-
-          fn.kill(pid, new BigInt(0, 9))
-        } else {
-        // Call thrd_join to wait for thread completion
-        // int thrd_join(thrd_t thr, int *res);
-          log('Waiting for thread to complete (thrd_join)...')
-          const join_ret = thrd_join(
-            thr_id,              // thrd_t thr
-            thread_result        // int *res
-          )
-
-          if (join_ret.eq(0)) {
-            const result_val = mem.view(thread_result).getUint32(0, true)
-            log('Thread completed successfully with result: ' + result_val)
-          } else {
-            log('WARNING: thrd_join returned: ' + join_ret.toString())
-          }
-
-          log('Binloader complete - thread has finished')
-        }
+        fn.kill(pid, new BigInt(0, 9))
+        
+        // Note: Code below this point will never execute
       } else {
         log('ERROR: thrd_create failed with return value: ' + ret.toString())
         throw new Error('Failed to spawn payload thread')
@@ -602,23 +584,22 @@ export function binloader_init () {
       return false
     }
 
-    BinLoader.skip_autoclose = skip_autoclose
+    // Note: skip_autoclose parameter is ignored - always auto-close
+    BinLoader.skip_autoclose = false  // Force false for auto-close
 
     try {
       BinLoader.init(payload.buf, payload.size)
 
-      if (!skip_autoclose) {
-        show_success(true, true)
-        log('Running payload in 3 seconds...')
-        const id = jsmaf.setInterval(function () {
-          jsmaf.clearInterval(id)
-          BinLoader.run()
-          log('Payload loaded successfully')
-        }, 3000)
-      } else {
+      // Always show success and run with delay for USB/file loads
+      show_success(true, true)
+      log('Running payload in 3 seconds...')
+      const id = jsmaf.setInterval(function () {
+        jsmaf.clearInterval(id)
         BinLoader.run()
+        // This log may not appear due to auto-close
         log('Payload loaded successfully')
-      }
+      }, 3000)
+
     } catch (e) {
       log('ERROR loading payload: ' + (e as Error).message)
       if ((e as Error).stack) log((e as Error).stack ?? '')
@@ -687,11 +668,12 @@ export function binloader_init () {
       return false
     }
 
+    // Force auto-close for network payloads too
     BinLoader.skip_autoclose = false
 
     try {
       BinLoader.init(payload.buf, payload.size)
-      BinLoader.run()
+      BinLoader.run()  // This will auto-close
       log('Payload loaded successfully')
       show_success(false, true)
     } catch (e) {
@@ -711,7 +693,7 @@ export function binloader_init () {
       for (const payload of payloads) {
         log('Loading payload: ' + payload)
         if (bl_file_exists(payload)) {
-          bl_load_from_file(payload, true)
+          bl_load_from_file(payload, true)  // true is ignored now
         } else {
           log(payload + ' not found!')
         }
@@ -733,7 +715,7 @@ export function binloader_init () {
           log('Warning: Failed to copy to /data, running from USB')
         }
 
-        // Load from USB
+        // Load from USB (false is ignored now - always auto-close)
         return bl_load_from_file(usb_path, false)
       }
     }
@@ -756,7 +738,7 @@ export function binloader_init () {
     if (!is_jailbroken) {
       bin_loader_main()
     } else {
-      bl_load_from_file('/download0/elfldr.elf')
+      bl_load_from_file('/download0/elfldr.elf', true)  // true is ignored
     }
   }
 

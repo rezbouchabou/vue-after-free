@@ -932,7 +932,8 @@ function init_threading () {
 
 const LOG_MAX_LINES = 38
 const LOG_COLORS = [
-  '#FFFFFF'
+  '#FF6B6B', '#FFA94D', '#FFD93D', '#6BCF7F',
+  '#4DABF7', '#9775FA', '#DA77F2'
 ]
 
 function setup_log_screen () {
